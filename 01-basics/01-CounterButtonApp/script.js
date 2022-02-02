@@ -1,3 +1,18 @@
-// import { createApp } from './vendor/vue.esm-browser.js';
+import { defineComponent, createApp } from './vendor/vue.esm-browser.js';
 
-// Создайте Vue приложение
+const Root = defineComponent({
+  name: 'Root',
+
+  data() {
+    return {
+      buttonCount: 0,
+    };
+  },
+  methods: {
+    buttonOnClick() {
+      this.buttonCount += 1;
+    },
+  },
+});
+
+createApp(Root).mount('#app');
