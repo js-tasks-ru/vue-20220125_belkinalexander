@@ -30,13 +30,13 @@ export default defineComponent({
       </div>
       <div class="agenda-item__col">{{ agendaItemTime }}</div>
       <div class="agenda-item__col">
-        <h3 class="agenda-item__title" v-html="agendaItemTitle"/>
-        <p class="agenda-item__talk" v-if="this.agendaItem.type === 'talk'">
-          <span>{{ this.agendaItem.speaker }}</span>
+        <h3 class="agenda-item__title">{{ agendaItemTitle }}</h3>
+        <p class="agenda-item__talk" v-if="agendaItem.type === 'talk'">
+          <span>{{ agendaItem.speaker }}</span>
           <span class="agenda-item__dot"></span>
-          <span class="agenda-item__lang">{{ this.agendaItem.language }}</span>
+          <span class="agenda-item__lang">{{ agendaItem.language }}</span>
         </p>
-        <p>{{ this.agendaItem.description || '' }}</p>
+        <p>{{ agendaItem.description || '' }}</p>
       </div>
     </div>`,
 });

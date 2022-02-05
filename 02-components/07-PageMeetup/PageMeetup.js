@@ -21,7 +21,7 @@ export default defineComponent({
   },
   data() {
     return {
-      meetup: {},
+      meetup: null,
       isError: false,
       isLoad: false,
     };
@@ -52,13 +52,13 @@ export default defineComponent({
 
   template: `
     <div class="page-meetup">
-      <meetup-view v-if="!this.isError && !this.isLoad" :meetup="this.meetup"/>
+      <meetup-view v-if="!isError && !isLoad" :meetup="meetup"/>
 
-      <ui-container v-if="this.isLoad">
+      <ui-container v-if="isLoad">
         <ui-alert>Загрузка...</ui-alert>
       </ui-container>
 
-      <ui-container v-if="this.isError && !this.isLoad">
+      <ui-container v-if="isError && !isLoad">
         <ui-alert>Test Error</ui-alert>
       </ui-container>
     </div>`,
