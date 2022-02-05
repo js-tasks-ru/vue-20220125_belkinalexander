@@ -3,6 +3,8 @@ import { defineComponent } from './vendor/vue.esm-browser.js';
 export default defineComponent({
   name: 'CounterButton',
 
+  buttonCounter: 1,
+
   props: {
     count: {
       type: Number,
@@ -14,17 +16,11 @@ export default defineComponent({
     'update:count': null,
   },
 
-  data() {
-    return {
-      counter: 1,
-    };
-  },
-
   methods: {
     buttonOnClick(value) {
       this.$emit('update:count', this.count + value);
     },
   },
 
-  template: `<button type="button" @click="buttonOnClick(counter)">{{ count }}</button>`,
+  template: `<button type="button" @click="buttonOnClick($options.buttonCounter)">{{ count }}</button>`,
 });
