@@ -24,6 +24,7 @@ export default defineComponent({
       meetup: null,
       isError: false,
       isLoad: false,
+      errorMessage: '',
     };
   },
 
@@ -43,9 +44,15 @@ export default defineComponent({
       fetchMeetupById(id)
         .then((response) => {
           this.meetup = response;
-          this.isError = !this.meetup;
+          if (!this.meetup) {
+            this.isError = true;
+            this.errorMessage = 'Not found';
+          }
         })
-        .catch(() => { this.isError = true })
+        .catch((e) => {
+          this.isError = true;
+          this.errorMessage = e.message;
+        })
         .finally(() => { this.isLoad = false });
     },
   },
@@ -59,7 +66,7 @@ export default defineComponent({
       </ui-container>
 
       <ui-container v-if="isError && !isLoad">
-        <ui-alert>Test Error</ui-alert>
+        <ui-alert>{{ errorMessage }}</ui-alert>
       </ui-container>
     </div>`,
 });
