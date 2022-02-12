@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       dropdownOpen: false,
-      selection: this.setSelection(this.modelValue, this.options),
     };
   },
 
@@ -63,22 +62,15 @@ export default {
     iconExist() {
       return this.options.find(({ icon }) => icon);
     },
-  },
-  watch: {
-    modelValue(value) {
-      this.selection = this.setSelection(value, this.options);
+    selection() {
+      return this.options.find((item) => item.value === this.modelValue) || { text: this.title };
     },
   },
 
   methods: {
-    setSelection(value, array) {
-      const selectedItem = array.find((item) => item.value === value);
-      return selectedItem || { text: this.title };
-    },
     optionClick(selectedOption) {
-      this.dropdownOpen = !this.dropdownOpen;
-      this.selection = selectedOption;
-      this.$emit('update:modelValue', this.selection.value);
+      this.dropdownOpen = false;
+      this.$emit('update:modelValue', selectedOption.value);
     },
   },
 };
