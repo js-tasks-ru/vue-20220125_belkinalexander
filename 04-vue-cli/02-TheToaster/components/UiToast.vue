@@ -34,7 +34,7 @@ export default {
 
   data() {
     return {
-      toastExpireOnClick: null,
+      timer: null,
     };
   },
 
@@ -43,10 +43,11 @@ export default {
   },
 
   methods: {
-    buttonPromise() { return new Promise((resolve) => (this.toastExpireOnClick = resolve)) },
-    timeoutPromise() { return new Promise((resolve) => setTimeout(resolve, this.toast.timeout || TOAST_TIMEOUT_DEFAULT)) },
-    async toastExpire() {
-      await Promise.race([this.timeoutPromise(), this.buttonPromise()]);
+    toastExpire() {
+      this.timer = setTimeout(() => { this.$emit('toast-expire', this.toast.key) }, this.toast.timeout || TOAST_TIMEOUT_DEFAULT);
+    },
+    toastExpireOnClick() {
+      clearTimeout(this.timer);
       this.$emit('toast-expire', this.toast.key);
     },
   },
