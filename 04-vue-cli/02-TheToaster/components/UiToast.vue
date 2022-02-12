@@ -1,6 +1,6 @@
 <template>
   <div class="toast" :class="`toast_${toast.type}`">
-    <ui-icon class="toast__icon" :icon="$options.iconType[toast.type]" />
+    <ui-icon class="toast__icon" :icon="$options.ICON_TYPE[toast.type]" />
     {{ toast.text }}
     <button class="button" type="button" @click="toastExpireOnClick">&times;</button>
   </div>
@@ -20,7 +20,7 @@ export default {
 
   components: { UiIcon },
 
-  iconType: ICON_TYPE,
+  ICON_TYPE,
 
   props: {
     toast: {

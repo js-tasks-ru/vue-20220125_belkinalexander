@@ -1,18 +1,14 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown" :class="dropdownClass">
+    <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: iconExist }" @click="dropdownOpen = !dropdownOpen">
+      <ui-icon v-if="selection.icon" :icon="selection.icon" class="dropdown__icon" />
+      <span>{{ selection.text }}</span>
     </button>
 
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div v-show="dropdownOpen" class="dropdown__menu" role="listbox">
+      <button v-for="(option, index) in options" :key="index" class="dropdown__item" :class="{ dropdown__item_icon: iconExist }" role="option" type="button" @click="optionClick(option)">
+        <ui-icon v-if="option.icon" :key="index" :icon="option.icon" class="dropdown__icon" />
+        {{ option.text }}
       </button>
     </div>
   </div>
@@ -25,6 +21,53 @@ export default {
   name: 'UiDropdown',
 
   components: { UiIcon },
+
+  props: {
+    options: {
+      type: Array,
+      required: true,
+    },
+    modelValue: String,
+    title: {
+      type: String,
+      required: true,
+    },
+  },
+
+  emits: ['update:modelValue'],
+
+  data() {
+    return {
+      dropdownOpen: false,
+      selection: this.setSelection(this.modelValue, this.options),
+    };
+  },
+
+  computed: {
+    dropdownClass() {
+      return this.dropdownOpen ? 'dropdown_opened' : 'dropdown_closed';
+    },
+    iconExist() {
+      return this.options.find(({ icon }) => icon);
+    },
+  },
+  watch: {
+    modelValue(value) {
+      this.selection = this.setSelection(value, this.options);
+    },
+  },
+
+  methods: {
+    setSelection(value, array) {
+      const selectedItem = array.find((item) => item.value === value);
+      return selectedItem || { text: this.title };
+    },
+    optionClick(selectedOption) {
+      this.dropdownOpen = !this.dropdownOpen;
+      this.selection = selectedOption;
+      this.$emit('update:modelValue', this.selection.value);
+    },
+  },
 };
 </script>
 
