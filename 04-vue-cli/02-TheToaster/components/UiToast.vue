@@ -42,6 +42,10 @@ export default {
     this.toastExpire();
   },
 
+  beforeUnmount() {
+    clearTimeout(this.timer);
+  },
+
   methods: {
     toastExpire() {
       this.timer = setTimeout(() => { this.$emit('toast-expire', this.toast.key) }, this.toast.timeout || TOAST_TIMEOUT_DEFAULT);
