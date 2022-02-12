@@ -1,12 +1,25 @@
 <template>
   <div class="dropdown" :class="dropdownClass">
-    <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: iconExist }" @click="dropdownOpen = !dropdownOpen">
+    <button
+      type="button"
+      class="dropdown__toggle"
+      :class="{ dropdown__toggle_icon: iconExist }"
+      @click="dropdownOpen = !dropdownOpen"
+    >
       <ui-icon v-if="selection.icon" :icon="selection.icon" class="dropdown__icon" />
       <span>{{ selection.text }}</span>
     </button>
 
     <div v-show="dropdownOpen" class="dropdown__menu" role="listbox">
-      <button v-for="(option, index) in options" :key="index" class="dropdown__item" :class="{ dropdown__item_icon: iconExist }" role="option" type="button" @click="optionClick(option)">
+      <button
+        v-for="(option, index) in options"
+        :key="index"
+        class="dropdown__item"
+        :class="{ dropdown__item_icon: iconExist }"
+        role="option"
+        type="button"
+        @click="optionClick(option)"
+      >
         <ui-icon v-if="option.icon" :key="index" :icon="option.icon" class="dropdown__icon" />
         {{ option.text }}
       </button>
