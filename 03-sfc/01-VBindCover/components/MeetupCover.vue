@@ -5,8 +5,6 @@
 </template>
 
 <script>
-const BACKGROUND_IMAGE_BASE_STYLE = 'linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),';
-
 export default {
   name: 'MeetupCover',
 
@@ -17,9 +15,7 @@ export default {
 
   computed: {
     backgroundImage() {
-      return this.image
-        ? `${BACKGROUND_IMAGE_BASE_STYLE} url(${this.image})`
-        : `${BACKGROUND_IMAGE_BASE_STYLE} var(--default-cover)`;
+      return this.image ? `url(${this.image})` : 'var(--default-cover)';
     },
   },
 };
@@ -29,7 +25,7 @@ export default {
 .meetup-cover {
   background-size: cover;
   background-position: center;
-  background-image: v-bind(backgroundImage);
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), v-bind(backgroundImage);
   display: flex;
   flex-direction: column;
   align-items: center;
