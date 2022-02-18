@@ -1,15 +1,97 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+    <label
+      class="image-uploader__preview"
+      :class="{ 'image-uploader__preview-loading': componentState === 2 }"
+      :style="imageStyle"
+    >
+      <span class="image-uploader__text">{{ uploaderText }}</span>
+      <input
+        v-bind="$attrs"
+        ref="input"
+        type="file"
+        accept="image/*"
+        class="image-uploader__input"
+        :disabled="inputDisabled"
+        @change="inputHandler"
+        @click="onClick"
+      />
     </label>
   </div>
 </template>
 
 <script>
+const UPLOADER_TEXT = {
+  1: 'Загрузить изображение',
+  2: 'Загрузка...',
+  3: 'Удалить изображение',
+};
 export default {
   name: 'UiImageUploader',
+
+  inheritAttrs: false,
+
+  props: {
+    preview: String,
+    uploader: Function,
+  },
+
+  emits: ['select', 'upload', 'error', 'remove'],
+
+  data() {
+    return {
+      file: null,
+      inputDisabled: false,
+      image: this.preview,
+    };
+  },
+
+  computed: {
+    componentState() {
+      if (!this.image && !this.file) return 1; // component state 'empty'
+      if (this.file && this.uploader) return 2; // component state 'load'
+      if (this.preview || this.image) return 3; // component state 'full'
+    },
+    uploaderText() {
+      return UPLOADER_TEXT[this.componentState];
+    },
+    imageStyle() {
+      if ([2, 3].includes(this.componentState)) return `--bg-url: url('${this.image}')`;
+    },
+  },
+
+  methods: {
+    inputHandler($event) {
+      this.file = $event.target.files[0];
+      this.$emit('select', this.file);
+      this.image = URL.createObjectURL(this.file);
+      if (this.uploader) {
+        this.inputDisabled = true;
+        this.uploader(this.file)
+          .then((response) => {
+            this.$emit('upload', response);
+          })
+          .catch((error) => {
+            this.image = null;
+            this.$refs.input.value = '';
+            this.$emit('error', error);
+          })
+          .finally(() => {
+            this.inputDisabled = false;
+            this.file = null;
+          });
+      } else {
+        this.file = null;
+      }
+    },
+    onClick(event) {
+      if (this.componentState === 3) event.preventDefault();
+      this.file = null;
+      this.image = null;
+      this.$refs.input.value = '';
+      this.$emit('remove');
+    },
+  },
 };
 </script>
 
