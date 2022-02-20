@@ -53,10 +53,10 @@ export default {
 
   methods: {
     hasLeftIcon() {
-      return !!this.$slots['left-icon'];
+      return Boolean(this.$slots['left-icon']);
     },
     hasRightIcon() {
-      return !!this.$slots['right-icon'];
+      return Boolean(this.$slots['right-icon']);
     },
     handleEvent($event) {
       this.$emit('update:modelValue', $event.target.value);

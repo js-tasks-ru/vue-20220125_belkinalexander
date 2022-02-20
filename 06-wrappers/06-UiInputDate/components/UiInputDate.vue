@@ -1,5 +1,5 @@
 <template>
-  <ui-input :model-value="dateTimeParser" :type="type" @input="onChangeUpdate" @change="onChangeUpdate">
+  <ui-input :model-value="dateTimeParser" :type="type" @input="handleEvent" @change="handleEvent">
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
@@ -45,7 +45,7 @@ export default {
   },
 
   methods: {
-    onChangeUpdate($event) {
+    handleEvent($event) {
       this.$emit('update:modelValue', $event.target.valueAsNumber || null);
     },
   },
