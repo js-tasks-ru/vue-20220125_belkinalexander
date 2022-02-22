@@ -39,6 +39,11 @@ export default {
     small: Boolean,
     rounded: Boolean,
     multiline: Boolean,
+    modelModifiers: {
+      default: () => ({
+        lazy: false,
+      }),
+    },
   },
 
   expose: ['focus'],
@@ -47,7 +52,7 @@ export default {
 
   computed: {
     eventType() {
-      return this.$attrs?.modelModifiers?.lazy ? 'change' : 'input';
+      return this.modelModifiers.lazy ? 'change' : 'input';
     },
   },
 
