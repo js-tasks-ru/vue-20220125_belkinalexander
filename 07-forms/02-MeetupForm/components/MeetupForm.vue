@@ -1,18 +1,18 @@
 <template>
-  <form class="meetup-form">
+  <form class="meetup-form" @submit.prevent="onClickSubmit">
     <div class="meetup-form__content">
       <fieldset class="meetup-form__section">
         <ui-form-group label="Название">
-          <ui-input name="title" />
+          <ui-input v-model="localMeetup.title" name="title" />
         </ui-form-group>
         <ui-form-group label="Дата">
-          <ui-input-date type="date" name="date" />
+          <ui-input-date v-model="localMeetup.date" type="date" name="date" />
         </ui-form-group>
         <ui-form-group label="Место">
-          <ui-input name="place" />
+          <ui-input v-model="localMeetup.place" name="place" />
         </ui-form-group>
         <ui-form-group label="Описание">
-          <ui-input multiline rows="3" name="description" />
+          <ui-input v-model="localMeetup.description" multiline rows="3" name="description" />
         </ui-form-group>
         <ui-form-group label="Изображение">
           <!--
@@ -21,24 +21,30 @@
           -->
           <ui-image-uploader
             name="image"
-            :preview="meetup.image"
-            @select="meetup.imageToUpload = $event"
-            @remove="meetup.imageToUpload = null"
+            :preview="localMeetup.image"
+            @select="localMeetup.imageToUpload = $event"
+            @remove="localMeetup.imageToUpload = null"
           />
         </ui-form-group>
       </fieldset>
 
       <h3 class="meetup-form__agenda-title">Программа</h3>
-      <!--
       <meetup-agenda-item-form
-         :key="agendaItem.id"
-         :agenda-item="..."
-         class="meetup-form__agenda-item"
-       />
-       -->
+        v-for="(agendaItem, index) in localMeetup.agenda"
+        :key="agendaItem.id"
+        :agenda-item="agendaItem"
+        class="meetup-form__agenda-item"
+        @remove="removeMeetupAgendaItem(index)"
+        @update:agendaItem="updateMeetupAgendaItem(index, $event)"
+      />
 
       <div class="meetup-form__append">
-        <button class="meetup-form__append-button" type="button" data-test="addAgendaItem">
+        <button
+          class="meetup-form__append-button"
+          type="button"
+          data-test="addAgendaItem"
+          @click="onClickMeetupFormAppend"
+        >
           + Добавить этап программы
         </button>
       </div>
@@ -47,9 +53,9 @@
     <div class="meetup-form__aside">
       <div class="meetup-form__aside-stick">
         <!-- data-test атрибуты используются для поиска нужного элемента в тестах, не удаляйте их -->
-        <ui-button variant="secondary" block class="meetup-form__aside-button" data-test="cancel">Отмена</ui-button>
+        <ui-button variant="secondary" block class="meetup-form__aside-button" data-test="cancel" @click="onClickCancel">Отмена</ui-button>
         <ui-button variant="primary" block class="meetup-form__aside-button" data-test="submit" type="submit">
-          SUBMIT
+          {{ submitText }}
         </ui-button>
       </div>
     </div>
@@ -57,15 +63,14 @@
 </template>
 
 <script>
-// import { cloneDeep } from 'lodash-es';
-
+import { cloneDeep } from 'lodash-es';
 import MeetupAgendaItemForm from './MeetupAgendaItemForm';
 import UiButton from './UiButton';
 import UiFormGroup from './UiFormGroup';
 import UiImageUploader from './UiImageUploader';
 import UiInput from './UiInput';
 import UiInputDate from './UiInputDate';
-// import { createAgendaItem } from '../meetupService';
+import { createAgendaItem } from '../meetupService';
 
 export default {
   name: 'MeetupForm',
@@ -88,6 +93,39 @@ export default {
     submitText: {
       type: String,
       default: '',
+    },
+  },
+
+  emits: ['cancel', 'submit'],
+
+  data() {
+    return {
+      localMeetup: cloneDeep(this.meetup),
+    };
+  },
+
+  methods: {
+    removeMeetupAgendaItem(index) {
+      this.localMeetup.agenda.splice(index, 1);
+    },
+    updateMeetupAgendaItem(index, agendaItem) {
+      this.localMeetup.agenda[index] = agendaItem;
+    },
+    onClickMeetupFormAppend() {
+      if (this.localMeetup.agenda.length) {
+        this.localMeetup.agenda.push({
+          ...createAgendaItem(),
+          startsAt: this.localMeetup.agenda[this.localMeetup.agenda.length - 1].endsAt,
+        });
+      } else {
+        this.localMeetup.agenda.push(createAgendaItem());
+      }
+    },
+    onClickCancel() {
+      this.$emit('cancel');
+    },
+    onClickSubmit() {
+      this.$emit('submit', cloneDeep(this.localMeetup));
     },
   },
 };

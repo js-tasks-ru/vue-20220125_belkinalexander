@@ -9,6 +9,7 @@
 import { SensorsDataController } from '../services/SensorsDataController';
 import { SensorsDataStreamingService } from '../services/SensorsDataStreamingService';
 import SensorsDataRow from './SensorsDataRow';
+import { reactive } from 'vue';
 
 export default {
   name: 'SensorsDataView',
@@ -42,7 +43,10 @@ export default {
     },
 
     setData(sensors) {
-      this.sensors = sensors;
+      this.sensors = {};
+      Object.entries(sensors).forEach(([key, value]) => {
+        this.sensors = { ...this.sensors, ...reactive({ [key]: { ...reactive(value) } }) };
+      });
     },
   },
 };
